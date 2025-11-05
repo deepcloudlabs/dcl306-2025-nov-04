@@ -93,6 +93,28 @@ export default function MastermindHook() {
             }
         }
     }, [counter]);
+
+    useEffect(() => {
+        const stateAsJson = localStorage.getItem("mastermind-v1");
+        if (stateAsJson) {
+            const state = JSON.parse(stateAsJson);
+            setLevel(state.level);
+            setSecret(state.secret);
+            setLives(state.lives);
+            setGuess(state.guess);
+            setCounter(state.counter);
+            setMoves(state.moves);
+            setMaxMoves(state.maxMoves);
+            setMaxCounter(state.maxCounter);
+        }
+    },[]);
+
+    useEffect(() => {
+        localStorage.setItem("mastermind-v1",JSON.stringify({
+            level,secret,lives,moves,guess,counter,maxMoves,maxCounter
+        }));
+    });
+
     const movesTable =
         <Table columns={["Guess", "Perfect Match", "Partial Match", "Evaluation"]}
                fields={["guess", "perfectMatch", "partialMatch", "message"]}
