@@ -32,10 +32,18 @@ class Mastermind extends React.PureComponent {
         this.timerId = setInterval(() => {
             let nextState = {...this.state};
             nextState.counter--;
-            console.log(this.state["counter"]);
-            this.setState(nextState, () => {
-                console.log(this.state["counter"]);
-            });
+            if (nextState.counter <= 0) {
+                if(nextState.lives === 0){
+                    //TODO: player loses: routing
+                    return;
+                } else {
+                    nextState.lives--;
+                    nextState.moves = [];
+                    nextState.counter = nextState.timeout;
+                    nextState.secret = createSecret(nextState.level);
+                }
+            }
+            this.setState(nextState);
         }, 1_000)
     }
 
@@ -52,24 +60,49 @@ class Mastermind extends React.PureComponent {
         // let nextState = window.structuredClone(this.state);
         if (this.state.guess === this.state.secret) {
             nextState.level++;
+            if (nextState.level > 10) {
+                //TODO: player wins: routing
+                return;
+            }
             nextState.moves = [];
             nextState.timeout += 10;
             nextState.lives++;
             nextState.counter = nextState.timeout;
             nextState.secret = createSecret(nextState.level);
         } else {
-            let move = createMove(this.state.guess,this.state.secret);
+            let move = createMove(this.state.guess, this.state.secret);
             nextState.moves = [...this.state.moves, move];
+            if (nextState.moves.length > nextState.maxMoves) {
+                if (nextState.lives === 0) {
+                    //TODO: player loses: routing
+                    return;
+                } else {
+                    nextState.lives--;
+                    nextState.moves = [];
+                    nextState.counter = nextState.timeout;
+                    nextState.secret = createSecret(nextState.level);
+                }
+            }
         }
         this.setState(nextState);
     }
 
     render() {
+        const movesTable =
+            <Table columns={["Guess", "Perfect Match", "Partial Match", "Evaluation"]}
+                   fields={["guess", "perfectMatch", "partialMatch", "message"]}
+                   items={this.state["moves"]}
+                   keyField={"guess"}
+            />;
+
         return ( // View
             <Container>
                 <Card title={"Game Console"}>
                     <Badge label={"Level"}
                            value={this.state["level"]}
+                           color={"bg-success"}/>
+                    <Badge label={"Secret"}
+                           value={this.state["secret"]}
                            color={"bg-success"}/>
                     <Badge label={"Lives"}
                            value={this.state["lives"]}
@@ -78,7 +111,7 @@ class Mastermind extends React.PureComponent {
                            value={this.state["counter"]}
                            color={"bg-danger"}/>
                     <Badge label={"Moves"}
-                           value={this.state["maxMoves"]-this.state["moves"].length}
+                           value={this.state["maxMoves"] - this.state["moves"].length}
                            color={"bg-primary"}/>
                     <InputText type={"text"}
                                name={"guess"}
@@ -89,11 +122,9 @@ class Mastermind extends React.PureComponent {
                         <Button label={"Play"} color={"success"}
                                 click={this.play}></Button>
                     </InputText>
-                    <Table columns={["Guess","Perfect Match", "Partial Match","Evaluation"]}
-                           fields={["guess","perfectMatch","partialMatch","message"]}
-                           items={this.state["moves"]}
-                           keyField={"guess"}
-                    />
+                    {
+                        this.state["moves"].length > 0 && movesTable
+                    }
                 </Card>
             </Container>
         );
