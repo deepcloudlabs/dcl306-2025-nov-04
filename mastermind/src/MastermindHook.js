@@ -3,7 +3,7 @@
               2. Stateful -> Class, function with React Hooks: useState
 
  */
-import React, {useEffect} from "react";
+import React, {useEffect, useTransition} from "react";
 import Container from "./components/common/container";
 import Card from "./components/common/card";
 import createSecret, {createMove} from "./utils/mastermind-util";
@@ -23,7 +23,7 @@ export default function MastermindHook() {
     let [moves, setMoves] = React.useState([]);
     let [maxMoves, setMaxMoves] = React.useState(10);
     let [maxCounter, setMaxCounter] = React.useState(90);
-    let [counter, setCounter] = React.useState(90);
+    let [counter, setCounter] = React.useState(10);
     //endregion
 
     //region action methods
@@ -74,6 +74,7 @@ export default function MastermindHook() {
             }
         }
     }
+
     //endregion
 
     useEffect(() => {
@@ -81,7 +82,7 @@ export default function MastermindHook() {
         return () => {
             clearInterval(timerId);
         };
-    }, []);
+    });
 
 
     const movesTable =
