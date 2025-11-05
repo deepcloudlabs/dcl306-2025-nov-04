@@ -47,7 +47,20 @@ class Mastermind extends React.PureComponent {
     }
 
     play = () => {
-        alert("button is clicked");
+        let nextState = {...this.state};
+        // let nextState = window.structuredClone(this.state);
+        if (this.state.guess === this.state.secret) {
+            nextState.level++;
+            nextState.moves = [];
+            nextState.timeout += 10;
+            nextState.lives++;
+            nextState.counter = nextState.timeout;
+            nextState.secret = createSecret(nextState.level);
+        } else {
+            let move = createMove(this.state.guess,this.state.secret);
+            nextState.moves = [...this.state.moves, move];
+        }
+        this.setState(nextState);
     }
 
     render() {
