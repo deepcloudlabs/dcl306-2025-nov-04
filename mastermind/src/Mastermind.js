@@ -33,7 +33,7 @@ class Mastermind extends React.PureComponent {
             let nextState = {...this.state};
             nextState.counter--;
             if (nextState.counter <= 0) {
-                if(nextState.lives === 0){
+                if (nextState.lives === 0) {
                     //TODO: player loses: routing
                     return;
                 } else {
@@ -58,7 +58,7 @@ class Mastermind extends React.PureComponent {
     play = () => {
         let nextState = {...this.state};
         // let nextState = window.structuredClone(this.state);
-        if (this.state.guess === this.state.secret) {
+        if (this.state["guess"] === this.state["secret"]) {
             nextState.level++;
             if (nextState.level > 10) {
                 //TODO: player wins: routing
@@ -70,8 +70,8 @@ class Mastermind extends React.PureComponent {
             nextState.counter = nextState.timeout;
             nextState.secret = createSecret(nextState.level);
         } else {
-            let move = createMove(this.state.guess, this.state.secret);
-            nextState.moves = [...this.state.moves, move];
+            let move = createMove(this.state["guess"], this.state["secret"]);
+            nextState.moves = [...this.state["moves"], move];
             if (nextState.moves.length > nextState.maxMoves) {
                 if (nextState.lives === 0) {
                     //TODO: player loses: routing

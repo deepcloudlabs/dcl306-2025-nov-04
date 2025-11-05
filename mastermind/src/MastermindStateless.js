@@ -11,6 +11,8 @@ import Button from "./components/common/button";
 import Table from "./components/common/table";
 import {useContext, useEffect} from "react";
 import {MastermindContext} from "./providers/mastermind-provider";
+import ACTION_TYPES, {GAME_STATUS} from "./config";
+import {useNavigate} from "react-router";
 
 export default function MastermindStateless() {
     const {mastermind, dispatchMastermind} = useContext(MastermindContext);
@@ -21,22 +23,34 @@ export default function MastermindStateless() {
                keyField={"guess"}
         />;
 
-    function handleGuessChange(event){
-        dispatchMastermind({type: "GUESS_CHANGED", payload: Number(event.target.value)});
+    function handleGuessChange(event) {
+        dispatchMastermind({type: ACTION_TYPES.GUESS_CHANGED, payload: Number(event.target.value)});
     }
 
-    function play(){
-        dispatchMastermind({type: "PLAY"});
+    function play() {
+        dispatchMastermind({type: ACTION_TYPES.PLAY});
     }
 
     useEffect(() => {
         const timer = setInterval(() => {
-            dispatchMastermind({type: "TIME_CHANGED"});
+            dispatchMastermind({type: ACTION_TYPES.TIME_CHANGED});
         }, 1_000);
         return () => {
             clearInterval(timer);
         }
-    }, []);
+    }, [dispatchMastermind]);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (mastermind.status === GAME_STATUS.WINS) {
+            navigate("/wins");
+        }
+        if (mastermind.status === GAME_STATUS.LOSES) {
+            navigate("/loses");
+        }
+    }, [mastermind.status, navigate]);
+
     return ( // View
         <Container>
             <Card title={"Game Console"}>

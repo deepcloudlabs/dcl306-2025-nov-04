@@ -21,9 +21,9 @@ export default function Table({columns,items,fields,keyField}){
                         (
                             <tr key={item[keyField]}>
                                 {
-                                    fields.map( field =>
+                                    fields.map( (field,i) =>
                                        (
-                                         <td>{item[field]}</td>
+                                         <td key={i}>{item[field]}</td>
                                        )
                                     )
                                 }

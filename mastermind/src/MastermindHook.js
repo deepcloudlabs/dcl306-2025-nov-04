@@ -3,7 +3,7 @@
               2. Stateful -> Class, function with React Hooks: useState
 
  */
-import React, {useEffect, useTransition} from "react";
+import React, {useEffect} from "react";
 import Container from "./components/common/container";
 import Card from "./components/common/card";
 import createSecret, {createMove} from "./utils/mastermind-util";
@@ -17,20 +17,20 @@ const initialSecret = createSecret(3);
 
 const stateAsJson = localStorage.getItem("mastermind-v1");
 
-function getStateFromLocalStorage(item_name,default_value) {
+function getStateFromLocalStorage(item_name, default_value) {
     if (stateAsJson) {
-       return JSON.parse(stateAsJson)[item_name];
+        return JSON.parse(stateAsJson)[item_name];
     }
     return default_value;
 }
 
 export default function MastermindHook() {
     //region define states using useState()
-    let [secret, setSecret] = React.useState(()=>{
-        return getStateFromLocalStorage("secret",initialSecret);
+    let [secret, setSecret] = React.useState(() => {
+        return getStateFromLocalStorage("secret", initialSecret);
     });
-    let [guess, setGuess] = React.useState(()=>{
-        return getStateFromLocalStorage("guess",123);
+    let [guess, setGuess] = React.useState(() => {
+        return getStateFromLocalStorage("guess", 123);
     });
     let [level, setLevel] = React.useState(3);
     let [lives, setLives] = React.useState(3);
@@ -43,8 +43,9 @@ export default function MastermindHook() {
     //region action methods
     function countDown() {
         setCounter(prevCounter => {
-            // console.log(`inside countDown(): counter: ${prevCounter}`);
-            return prevCounter - 1;}
+                // console.log(`inside countDown(): counter: ${prevCounter}`);
+                return prevCounter - 1;
+            }
         );
     }
 
@@ -70,7 +71,6 @@ export default function MastermindHook() {
             if (moves.length >= maxMoves) {
                 if (lives === 0) {
                     navigate("/loses");
-                    return;
                 } else {
                     setLives(prevLives => prevLives - 1);
                     setMoves([]);
@@ -80,6 +80,7 @@ export default function MastermindHook() {
             }
         }
     }
+
     const navigate = useNavigate();
 
     //endregion
@@ -97,7 +98,6 @@ export default function MastermindHook() {
         if (counter <= 0) {
             if (lives === 0) {
                 navigate("/loses");
-                return;
             } else {
                 setLives(prevLives => prevLives - 1);
                 setMoves([]);
@@ -105,7 +105,7 @@ export default function MastermindHook() {
                 setSecret(createSecret(level));
             }
         }
-    }, [counter]);
+    }, [counter, lives, navigate, level, maxCounter]);
 
     useEffect(() => {
         const stateAsJson = localStorage.getItem("mastermind-v1");
@@ -120,11 +120,11 @@ export default function MastermindHook() {
             setMaxMoves(state.maxMoves);
             setMaxCounter(state.maxCounter);
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
-        localStorage.setItem("mastermind-v1",JSON.stringify({
-            level,secret,lives,moves,guess,counter,maxMoves,maxCounter
+        localStorage.setItem("mastermind-v1", JSON.stringify({
+            level, secret, lives, moves, guess, counter, maxMoves, maxCounter
         }));
     });
 

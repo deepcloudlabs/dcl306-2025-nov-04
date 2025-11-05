@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import "bootstrap/dist/css/bootstrap.css";
-import MastermindHook from "./MastermindHook";
 import {BrowserRouter, Route, Routes} from "react-router";
 import PlayerWins from "./components/use-cases/player-wins";
 import PlayerLoses from "./components/use-cases/player-loses";

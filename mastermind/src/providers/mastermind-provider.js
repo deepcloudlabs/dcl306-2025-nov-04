@@ -1,26 +1,18 @@
-import createSecret from "../utils/mastermind-util";
 import MastermindStateless from "../MastermindStateless";
-import React,{useReducer} from "react";
+import React, {useReducer} from "react";
 import MastermindReducer from "../reducers/mastermind-reducer";
+import {INITIAL_GAME_STATE, LOCAL_STORAGE_KEY} from "../config";
 
-const initialGameState = {
-    level: 3,
-    secret: createSecret(3),
-    lives: 3,
-    moves: [],
-    counter: 90,
-    maxCounter: 90,
-    maxMoves: 10,
-    guess: 123
-};
 
-export const MastermindContext = React.createContext(initialGameState);
+export const MastermindContext = React.createContext(INITIAL_GAME_STATE);
 
-export default function MastermindProvider(){
-    const [mastermind,dispatchMastermind] = useReducer(MastermindReducer,initialGameState);
+const localState = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+export default function MastermindProvider() {
+    const [mastermind, dispatchMastermind] = useReducer(MastermindReducer, localState ? JSON.parse(localState) : INITIAL_GAME_STATE);
     return (
-        <MastermindContext.Provider value={{mastermind,dispatchMastermind}}>
-            <MastermindStateless />
+        <MastermindContext.Provider value={{mastermind, dispatchMastermind}}>
+            <MastermindStateless/>
         </MastermindContext.Provider>
     );
 }

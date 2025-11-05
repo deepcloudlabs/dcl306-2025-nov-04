@@ -1,57 +1,74 @@
-import mastermind from "../Mastermind";
 import createSecret, {createMove} from "../utils/mastermind-util";
+import ACTION_TYPES, {GAME_STATUS, LOCAL_STORAGE_KEY} from "../config";
+
+function play(state) {
+    let newState = {...state};
+    if (newState.guess === newState.secret) {
+        newState.level++;
+        if (newState.level > 10) {
+            newState.status = GAME_STATUS.WINS;
+            return newState;
+        }
+        newState.moves = [];
+        newState.maxCounter += 10;
+        newState.counter = newState.maxCounter;
+        newState.lives++;
+        newState.secret = createSecret(newState.level);
+    } else {
+        let move = createMove(newState.guess, newState.secret);
+        newState.moves = [...state.moves, move];
+        if (newState.moves.length >= newState.maxMoves) {
+            if (newState.lives === 0) {
+                newState.status = GAME_STATUS.LOSES;
+            } else {
+                newState.lives--;
+                newState.moves = [];
+                newState.counter = newState.maxCounter;
+                newState.secret = createSecret(newState.level);
+            }
+        }
+    }
+    return newState;
+}
+
+function handleChange(state, action) {
+    let guess = action.payload;
+    return {...state, guess}
+}
+
+function countDown(state) {
+    const newState = {...state};
+    newState.counter--;
+    if (newState.counter <= 0) {
+        if (newState.lives === 0) {
+            newState.status = GAME_STATUS.LOSES;
+            return newState;
+        } else {
+            newState.lives--;
+            newState.moves = [];
+            newState.maxCounter += 10
+            newState.counter = newState.maxCounter;
+            newState.secret = createSecret(newState.level);
+        }
+    }
+    return newState;
+}
 
 export default function MastermindReducer(state, action) {
-    let newState = {...state};
+    let newState;
     switch (action.type) {
-        case "PLAY":
-            if (newState.guess === newState.secret) {
-                newState.level++;
-                if (newState.level >= 10) {
-                    //TODO: design and implement a solution for routing case
-                    return;
-                }
-                newState.moves = [];
-                newState.maxCounter += 10;
-                newState.counter = newState.maxCounter;
-                newState.lives++;
-                newState.secret = createSecret(newState.level);
-            } else {
-                let move = createMove(newState.guess, newState.secret);
-                newState.moves = [...state.moves, move];
-                if (newState.moves.length >= newState.maxMoves) {
-                    if (newState.lives === 0) {
-                        //TODO: design and implement a solution for routing case
-                        return;
-                    } else {
-                        newState.lives--;
-                        newState.moves = [];
-                        newState.counter = newState.maxCounter;
-                        newState.secret = createSecret(newState.level);
-                    }
-                }
-            }
+        case ACTION_TYPES.PLAY:
+            newState = play(state);
             break;
-        case "GUESS_CHANGED":
-            let guess = action.payload;
-            return {...state, guess};
-        case "TIME_CHANGED":
-            newState.counter--;
-            if (newState.counter <= 0) {
-                if (newState.lives === 0) {
-                    //TODO: design and implement a solution for routing case
-                    return;
-                } else {
-                    newState.lives--;
-                    newState.moves = [];
-                    newState.maxCounter += 10
-                    newState.counter = newState.maxCounter;
-                    newState.secret = createSecret(newState.level);
-                }
-            }
+        case ACTION_TYPES.GUESS_CHANGED:
+            newState = handleChange(state, action);
+            break;
+        case ACTION_TYPES.TIME_CHANGED:
+            newState = countDown(state);
             break;
         default:
             throw new Error(`Unknown action type: ${action.type}`);
     }
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newState));
     return newState;
 }
