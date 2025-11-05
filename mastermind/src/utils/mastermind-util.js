@@ -46,7 +46,7 @@ export class Move {
             this.message = `-${this.partialMatch}`;
         }
         if (perfectMatch > 0) {
-            this.message = `${this.messsage}+${this.perfectMatch}`;
+            this.message = `${this.message}+${this.perfectMatch}`;
         }
     }
 }
