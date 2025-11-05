@@ -15,6 +15,7 @@ import Table from "./components/common/table";
 const initialSecret = createSecret(3);
 
 export default function MastermindHook() {
+    //region define states using useState()
     let [secret, setSecret] = React.useState(initialSecret);
     let [guess, setGuess] = React.useState(123);
     let [level, setLevel] = React.useState(3);
@@ -23,7 +24,9 @@ export default function MastermindHook() {
     let [maxMoves, setMaxMoves] = React.useState(10);
     let [maxCounter, setMaxCounter] = React.useState(90);
     let [counter, setCounter] = React.useState(90);
+    //endregion
 
+    //region action methods
     function countDown() {
         setCounter(prevCounter => prevCounter - 1);
         if (counter <= 0) {
@@ -38,13 +41,6 @@ export default function MastermindHook() {
             }
         }
     }
-
-    useEffect(() => {
-        const timerId = setInterval(countDown, 1_000);
-        return () => {
-            clearInterval(timerId);
-        };
-    }, []);
 
     function handleGuessChange(event) {
         setGuess(Number(event.target.value));
@@ -78,6 +74,15 @@ export default function MastermindHook() {
             }
         }
     }
+    //endregion
+
+    useEffect(() => {
+        const timerId = setInterval(countDown, 1_000);
+        return () => {
+            clearInterval(timerId);
+        };
+    }, []);
+
 
     const movesTable =
         <Table columns={["Guess", "Perfect Match", "Partial Match", "Evaluation"]}
