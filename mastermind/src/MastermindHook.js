@@ -27,8 +27,6 @@ export default function MastermindHook() {
     useEffect( () => {
         const timerId = setInterval(() => {
             setCounter(prevCounter => prevCounter - 1);
-            setCounter(counter + 1);
-            setCounter(counter + 1);
             if (counter <= 0) {
                 if(lives === 0){
                     //TODO: player loses: routing
