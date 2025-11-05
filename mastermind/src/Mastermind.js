@@ -86,8 +86,34 @@ class Mastermind extends React.PureComponent {
                                onChange={this.handleGuessChange}
                                value={this.state["guess"]}>
                         <Button label={"Play"} color={"success"}
-                                onClick={this.play}></Button>
+                                click={this.play}></Button>
                     </InputText>
+                    <div className={"mb-3"}>
+                        <table className="table table-striped table-bordered table-hover table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>Guess</th>
+                                    <th>Perfect Match</th>
+                                    <th>Partial Match</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                this.state.moves.map( (move, i) =>
+                                    (
+                                        <tr key={i}>
+                                            <td>{move.guess}</td>
+                                            <td>+{move.perfectMatch}</td>
+                                            <td>-{move.partialMatch}</td>
+                                            <td>{move.message}</td>
+                                        </tr>
+                                    )
+                                )
+                            }
+                            </tbody>
+                        </table>
+                    </div>
                 </Card>
             </Container>
         );
