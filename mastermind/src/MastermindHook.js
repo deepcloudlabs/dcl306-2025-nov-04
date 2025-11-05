@@ -13,6 +13,7 @@ import Button from "./components/common/button";
 import Table from "./components/common/table";
 
 const initialSecret = createSecret(3);
+
 export default function MastermindHook() {
     let [secret, setSecret] = React.useState(initialSecret);
     let [guess, setGuess] = React.useState(123);
@@ -23,106 +24,99 @@ export default function MastermindHook() {
     let [maxCounter, setMaxCounter] = React.useState(90);
     let [counter, setCounter] = React.useState(90);
 
-
-    useEffect( () => {
-        const timerId = setInterval(() => {
-            setCounter(prevCounter => prevCounter - 1);
-            if (counter <= 0) {
-                if(lives === 0){
-                    //TODO: player loses: routing
-                    return;
-                } else {
-                    setLives(prevLives => prevLives - 1);
-                    nextState.moves = [];
-                    nextState.counter = nextState.timeout;
-                    nextState.secret = createSecret(nextState.level);
-                }
+    function countDown() {
+        setCounter(prevCounter => prevCounter - 1);
+        if (counter <= 0) {
+            if (lives === 0) {
+                //TODO: player loses: routing
+                return;
+            } else {
+                setLives(prevLives => prevLives - 1);
+                setMoves([]);
+                setCounter(maxCounter);
+                setSecret(createSecret(level));
             }
-            this.setState(nextState);
-        }, 1_000);
+        }
+    }
+
+    useEffect(() => {
+        const timerId = setInterval(countDown, 1_000);
         return () => {
             clearInterval(timerId);
         };
     }, []);
 
-    handleGuessChange = (event) => {
-        this.setState({guess: Number(event.target.value)});
+    function handleGuessChange(event) {
+        setGuess(Number(event.target.value));
     }
 
-    play = () => {
-        let nextState = {...this.state};
-        // let nextState = window.structuredClone(this.state);
-        if (this.state.guess === this.state.secret) {
-            nextState.level++;
-            if (nextState.level > 10) {
+    function play() {
+        if (guess === secret) {
+            setLevel(prevLevel => prevLevel + 1);
+            if (level === 10) {
                 //TODO: player wins: routing
                 return;
             }
-            nextState.moves = [];
-            nextState.timeout += 10;
-            nextState.lives++;
-            nextState.counter = nextState.timeout;
-            nextState.secret = createSecret(nextState.level);
+            setMoves([]);
+            setMaxCounter(prevMaxCount => prevMaxCount + 10);
+            setLives(prevLives => prevLives + 1);
+            setCounter(maxCounter + 10);
+            setSecret(createSecret(level + 1));
         } else {
-            let move = createMove(this.state.guess, this.state.secret);
-            nextState.moves = [...this.state.moves, move];
-            if (nextState.moves.length > nextState.maxMoves) {
-                if (nextState.lives === 0) {
+            let move = createMove(guess, secret);
+            setMoves(prevMoves => [...prevMoves, move]);
+            if (moves.length >= maxMoves) {
+                if (lives === 0) {
                     //TODO: player loses: routing
                     return;
                 } else {
-                    nextState.lives--;
-                    nextState.moves = [];
-                    nextState.counter = nextState.timeout;
-                    nextState.secret = createSecret(nextState.level);
+                    setLives(prevLives => prevLives - 1);
+                    setMoves([]);
+                    setCounter(maxCounter);
+                    setSecret(createSecret(level));
                 }
             }
         }
-        this.setState(nextState);
     }
 
-    render() {
-        const movesTable =
-            <Table columns={["Guess", "Perfect Match", "Partial Match", "Evaluation"]}
-                   fields={["guess", "perfectMatch", "partialMatch", "message"]}
-                   items={this.state["moves"]}
-                   keyField={"guess"}
-            />;
+    const movesTable =
+        <Table columns={["Guess", "Perfect Match", "Partial Match", "Evaluation"]}
+               fields={["guess", "perfectMatch", "partialMatch", "message"]}
+               items={moves}
+               keyField={"guess"}
+        />;
 
-        return ( // View
-            <Container>
-                <Card title={"Game Console"}>
-                    <Badge label={"Level"}
-                           value={this.state["level"]}
-                           color={"bg-success"}/>
-                    <Badge label={"Secret"}
-                           value={this.state["secret"]}
-                           color={"bg-success"}/>
-                    <Badge label={"Lives"}
-                           value={this.state["lives"]}
-                           color={"bg-warning"}/>
-                    <Badge label={"Counter"}
-                           value={this.state["counter"]}
-                           color={"bg-danger"}/>
-                    <Badge label={"Moves"}
-                           value={this.state["maxMoves"] - this.state["moves"].length}
-                           color={"bg-primary"}/>
-                    <InputText type={"text"}
-                               name={"guess"}
-                               label={"Guess"}
-                               placeholder={"Enter your guess"}
-                               onChange={this.handleGuessChange}
-                               value={this.state["guess"]}>
-                        <Button label={"Play"} color={"success"}
-                                click={this.play}></Button>
-                    </InputText>
-                    {
-                        this.state["moves"].length > 0 && movesTable
-                    }
-                </Card>
-            </Container>
-        );
-    }
+    return ( // View
+        <Container>
+            <Card title={"Game Console"}>
+                <Badge label={"Level"}
+                       value={level}
+                       color={"bg-success"}/>
+                <Badge label={"Secret"}
+                       value={secret}
+                       color={"bg-success"}/>
+                <Badge label={"Lives"}
+                       value={lives}
+                       color={"bg-warning"}/>
+                <Badge label={"Counter"}
+                       value={counter}
+                       color={"bg-danger"}/>
+                <Badge label={"Moves"}
+                       value={maxMoves - moves.length}
+                       color={"bg-primary"}/>
+                <InputText type={"text"}
+                           name={"guess"}
+                           label={"Guess"}
+                           placeholder={"Enter your guess"}
+                           onChange={handleGuessChange}
+                           value={guess}>
+                    <Button label={"Play"} color={"success"}
+                            click={play}></Button>
+                </InputText>
+                {
+                    moves.length > 0 && movesTable
+                }
+            </Card>
+        </Container>
+    );
 }
-
-export default Mastermind;
