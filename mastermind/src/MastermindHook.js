@@ -11,6 +11,7 @@ import InputText from "./components/common/input-text";
 import Badge from "./components/common/badge";
 import Button from "./components/common/button";
 import Table from "./components/common/table";
+import {useNavigate} from "react-router";
 
 const initialSecret = createSecret(3);
 
@@ -42,7 +43,7 @@ export default function MastermindHook() {
         if (guess === secret) {
             setLevel(prevLevel => prevLevel + 1);
             if (level === 10) {
-                //TODO: player wins: routing
+                navigate("/wins");
                 return;
             }
             setMoves([]);
@@ -55,7 +56,7 @@ export default function MastermindHook() {
             setMoves(prevMoves => [...prevMoves, move]);
             if (moves.length >= maxMoves) {
                 if (lives === 0) {
-                    //TODO: player loses: routing
+                    navigate("/loses");
                     return;
                 } else {
                     setLives(prevLives => prevLives - 1);
@@ -66,6 +67,7 @@ export default function MastermindHook() {
             }
         }
     }
+    const navigate = useNavigate();
 
     //endregion
 
@@ -81,7 +83,7 @@ export default function MastermindHook() {
         //console.log(`counter is updated => useEffect()...:${counter}`);
         if (counter <= 0) {
             if (lives === 0) {
-                //TODO: player loses: routing
+                navigate("/loses");
                 return;
             } else {
                 setLives(prevLives => prevLives - 1);
