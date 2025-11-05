@@ -6,7 +6,7 @@
 import React from "react";
 import Container from "./components/common/container";
 import Card from "./components/common/card";
-import createSecret from "./utils/mastermind-util";
+import createSecret, {createMove} from "./utils/mastermind-util";
 import InputText from "./components/common/input-text";
 import Badge from "./components/common/badge";
 import Button from "./components/common/button";
