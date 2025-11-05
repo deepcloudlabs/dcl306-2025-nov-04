@@ -7,6 +7,8 @@ import React from "react";
 import Container from "./components/common/container";
 import Card from "./components/common/card";
 import createSecret from "./utils/mastermind-util";
+import InputText from "./components/common/input-text";
+import Button from "bootstrap/js/src/button";
 
 class Mastermind extends React.PureComponent {
     constructor(props) {
@@ -39,11 +41,26 @@ class Mastermind extends React.PureComponent {
         clearInterval(this.timerId);
     }
 
+    handleGuessChange = (event) => {
+        this.setState({guess: Number(event.target.value)});
+    }
+
+    play = () => {
+        alert("button is clicked");
+    }
+
     render() {
         return ( // View
             <Container>
                 <Card title={"Game Console"}>
-                    {this.state["counter"]}
+                    <InputText type={"text"}
+                               name={"guess"}
+                               label={"Guess"}
+                               placeholder={"Enter your guess"}
+                               onChange={this.handleGuessChange}
+                               value={this.state["guess"]}>
+                        <Button label={"Play"} color={"success"} onClick={this.play}></Button>
+                    </InputText>
                 </Card>
             </Container>
         );
