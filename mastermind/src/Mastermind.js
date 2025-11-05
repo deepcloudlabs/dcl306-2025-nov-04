@@ -35,7 +35,7 @@ class Mastermind extends React.PureComponent {
             this.setState(nextState, () => {
                 console.log(this.state["counter"]);
             });
-        }, 5_000)
+        }, 1_000)
     }
 
     componentWillUnmount() {
@@ -57,6 +57,15 @@ class Mastermind extends React.PureComponent {
                     <Badge label={"Level"}
                            value={this.state["level"]}
                            color={"bg-success"}/>
+                    <Badge label={"Lives"}
+                           value={this.state["lives"]}
+                           color={"bg-warning"}/>
+                    <Badge label={"Counter"}
+                           value={this.state["counter"]}
+                           color={"bg-danger"}/>
+                    <Badge label={"Moves"}
+                           value={this.state["maxMoves"]-this.state["moves"].length}
+                           color={"bg-primary"}/>
                     <InputText type={"text"}
                                name={"guess"}
                                label={"Guess"}
