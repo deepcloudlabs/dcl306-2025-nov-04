@@ -28,18 +28,10 @@ export default function MastermindHook() {
 
     //region action methods
     function countDown() {
-        setCounter(prevCounter => prevCounter - 1);
-        if (counter <= 0) {
-            if (lives === 0) {
-                //TODO: player loses: routing
-                return;
-            } else {
-                setLives(prevLives => prevLives - 1);
-                setMoves([]);
-                setCounter(maxCounter);
-                setSecret(createSecret(level));
-            }
-        }
+        setCounter(prevCounter => {
+            // console.log(`inside countDown(): counter: ${prevCounter}`);
+            return prevCounter - 1;}
+        );
     }
 
     function handleGuessChange(event) {
@@ -78,13 +70,27 @@ export default function MastermindHook() {
     //endregion
 
     useEffect(() => {
+        //console.log("timer's initialization in useEffect()....");
         const timerId = setInterval(countDown, 1_000);
         return () => {
             clearInterval(timerId);
         };
-    });
+    }, []);
 
-
+    useEffect(() => {
+        //console.log(`counter is updated => useEffect()...:${counter}`);
+        if (counter <= 0) {
+            if (lives === 0) {
+                //TODO: player loses: routing
+                return;
+            } else {
+                setLives(prevLives => prevLives - 1);
+                setMoves([]);
+                setCounter(maxCounter);
+                setSecret(createSecret(level));
+            }
+        }
+    }, [counter]);
     const movesTable =
         <Table columns={["Guess", "Perfect Match", "Partial Match", "Evaluation"]}
                fields={["guess", "perfectMatch", "partialMatch", "message"]}
