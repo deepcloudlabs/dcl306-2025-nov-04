@@ -15,10 +15,23 @@ import {useNavigate} from "react-router";
 
 const initialSecret = createSecret(3);
 
+const stateAsJson = localStorage.getItem("mastermind-v1");
+
+function getStateFromLocalStorage(item_name,default_value) {
+    if (stateAsJson) {
+       return JSON.parse(stateAsJson)[item_name];
+    }
+    return default_value;
+}
+
 export default function MastermindHook() {
     //region define states using useState()
-    let [secret, setSecret] = React.useState(initialSecret);
-    let [guess, setGuess] = React.useState(123);
+    let [secret, setSecret] = React.useState(()=>{
+        return getStateFromLocalStorage("secret",initialSecret);
+    });
+    let [guess, setGuess] = React.useState(()=>{
+        return getStateFromLocalStorage("guess",123);
+    });
     let [level, setLevel] = React.useState(3);
     let [lives, setLives] = React.useState(3);
     let [moves, setMoves] = React.useState([]);
@@ -99,9 +112,9 @@ export default function MastermindHook() {
         if (stateAsJson) {
             const state = JSON.parse(stateAsJson);
             setLevel(state.level);
-            setSecret(state.secret);
+            //setSecret(state.secret);
             setLives(state.lives);
-            setGuess(state.guess);
+            //setGuess(state.guess);
             setCounter(state.counter);
             setMoves(state.moves);
             setMaxMoves(state.maxMoves);
