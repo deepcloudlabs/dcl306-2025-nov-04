@@ -1,3 +1,5 @@
+import {SORT_DIRECTION} from "../utils/sorting-utils";
+
 export const ActionTypes = {
     ON_CHANGE: "on_change",
     ON_PHOTO_CHANGE: "on_photo_change",
@@ -9,8 +11,10 @@ export const ActionTypes = {
     ON_EMPLOYEES_RETRIEVED: "on_employees_retrieved",
     ON_ROW_CLICKED: "on_row_clicked",
     ON_EMPLOYEE_FIRED_ON_ROW: "on_row_clicked_on_ROW",
+    ON_SORTED: "on_sorted",
     ON_ERROR: "on_error"
 }
+
 export default function HrReducer(state, action) {
     let employee = {...state.employee};
     switch (action.type) {
@@ -42,6 +46,20 @@ export default function HrReducer(state, action) {
         case ActionTypes.ON_EMPLOYEE_RECEIVED:
             return {...state, employee: action.value}
             break;
+        case ActionTypes.ON_SORTED:
+            let emps = [...state.employees]
+            emps.sort((emp1, emp2) => {
+                if (state.sortDirections[action.value] === SORT_DIRECTION.ASC)
+                    return emp1[action.value] - emp2[action.value];
+                return emp2[action.value] - emp1[action.value];
+            })
+            let sortDirections = {...state.sortDirections}
+            if (sortDirections[action.value] === SORT_DIRECTION.ASC)
+                sortDirections[action.value] = SORT_DIRECTION.DESC;
+            else
+                sortDirections[action.value] = SORT_DIRECTION.ASC;
+            return {...state, employees: emps, sortDirections};
+
         case ActionTypes.ON_ROW_CLICKED:
             return {...state, employee: action.value}
             break;

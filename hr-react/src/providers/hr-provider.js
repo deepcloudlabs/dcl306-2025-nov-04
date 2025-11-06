@@ -2,11 +2,16 @@ import React, {useContext, useReducer} from "react";
 import HrApp from "../HrApp";
 import HrReducer from "../reducers/hr-reducer";
 import Employee from "../model/employee";
+import {SORT_DIRECTION} from "../utils/sorting-utils";
 
 const initial_state = {
     employee: new Employee({}),
     employees: [],
-    departments: ["IT", "SALES", "FINANCE", "HR"]
+    departments: ["IT", "SALES", "FINANCE", "HR"],
+    sortDirections: {
+        "salary": SORT_DIRECTION.ASC,
+        "birthYear": SORT_DIRECTION.ASC
+    }
 }
 
 export const HrContext = React.createContext(initial_state);
@@ -24,6 +29,11 @@ export function useHrDispatcher() {
 export function useEmployee() {
     const {hr} = useContext(HrContext);
     return hr.employee;
+}
+
+export function useSortDirections() {
+    const {hr} = useContext(HrContext);
+    return hr.sortDirections;
 }
 
 export function useEmployees() {

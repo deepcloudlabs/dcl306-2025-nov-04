@@ -1,5 +1,5 @@
 import Card from "./common/card";
-import {useEmployees, useHrDispatcher} from "../providers/hr-provider";
+import {useEmployees, useHrDispatcher, useSortDirections} from "../providers/hr-provider";
 import Button from "./common/button";
 import {useCallback, useMemo} from "react";
 import Photo from "./common/photo";
@@ -10,6 +10,7 @@ import Badge from "./common/badge";
 export default function EmployeesCard() {
     const employees = useEmployees();
     const hrDispatcher = useHrDispatcher();
+    const sortDirections = useSortDirections();
 
     const handleError = useCallback(err => {
         hrDispatcher({type: ActionTypes.ON_ERROR, value: err});
@@ -49,7 +50,9 @@ export default function EmployeesCard() {
             )
         );
     }, [employees]);
-
+    const sortBy = useCallback( column => {
+        hrDispatcher({type: ActionTypes.ON_SORTED, value: column});
+    })
     const retrieveEmployees = useCallback(async () => {
         console.log("retrieveEmployees() is created!")
         callApi("/", API_OPTIONS.GET)
@@ -71,9 +74,13 @@ export default function EmployeesCard() {
                     <th>Photo</th>
                     <th>Identity No</th>
                     <th>Full Name</th>
-                    <th>Salary</th>
+                    <th><Button color={"btn-success"}
+                                click={() => sortBy("salary")}
+                                label={"Salary"}/></th>
                     <th>IBAN</th>
-                    <th>Birth Year</th>
+                    <th><Button color={"btn-primary"}
+                                click={() => sortBy("birthYear")}
+                                label={"Birth Year"}/></th>
                     <th>Department</th>
                     <th>Full-time?</th>
                     <th>Operations</th>
