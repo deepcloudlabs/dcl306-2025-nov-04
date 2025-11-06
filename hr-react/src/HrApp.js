@@ -69,7 +69,6 @@ function HrApp() {
             <p></p>
             <Container>
                 <Card title={"Employee"}>
-
                     <InputText value={employee.identityNo}
                                label={"Identity No"}
                                form_id={"identityNo"}
