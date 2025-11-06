@@ -8,9 +8,45 @@ import {ActionTypes} from "../reducers/hr-reducer";
 import Badge from "./common/badge";
 
 export default function EmployeeCard() {
+    const employees = useEmployees();
     return (
         <Card title={"Employees"}>
-            implement this
+            <Button color={"btn-success"} label={"Retrieve Employees"}></Button>
+            <table className={"table table-bordered table-responsive table-hover table-striped"}>
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Photo</th>
+                    <th>Identity No</th>
+                    <th>Full Name</th>
+                    <th>Salary</th>
+                    <th>IBAN</th>
+                    <th>Birth Year</th>
+                    <th>Department</th>
+                    <th>Full-time?</th>
+                    <th>Operations</th>
+                </tr>
+                </thead>
+                <tbody>
+                {
+                    employees.map((employee, index) => (
+                            <tr key={employee.identityNo}>
+                                <td>{index+1}</td>
+                                <td><Photo readOnly={true} value={employee.photo}/></td>
+                                <td>{employee.identityNo}</td>
+                                <td>{employee.fullname}</td>
+                                <td>{employee.salary}</td>
+                                <td>{employee.iban}</td>
+                                <td>{employee.birthYear}</td>
+                                <td><Badge displayOnly={true} value={employee.birthYear}/></td>
+                                <td><Badge displayOnly={true} value={employee.fulltime ? 'FULL-TIME' : 'PART-TIME'}/></td>
+                                <td><Button color={"danger"} label={"Fire Employee"}/></td>
+                            </tr>
+                        )
+                    )
+                }
+                </tbody>
+            </table>
         </Card>
     );
 }
