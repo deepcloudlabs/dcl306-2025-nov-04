@@ -1,7 +1,7 @@
 import Container from "./components/common/container";
 import Card from "./components/common/card";
 import SelectBox from "./components/common/select-box";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import io from "socket.io-client";
 import Table from "./components/common/table";
 import {Line} from "react-chartjs-2";
@@ -22,6 +22,17 @@ function Algotrader() {
     const handleSymbolChange = /* TODO: implement this*/ undefined;
     const handleWindowSizeChange = /* TODO: implement this*/ undefined;
     const monitoringButton = /* TODO: implement this*/ undefined;
+
+    useEffect(() => {
+        fetch('https://api.binance.com/api/v3/ticker/price')
+            .then(res => res.json())
+            .then(tickers => {
+                tickers.sort((t1,t2) => t2.symbol.localeCompare(t1.symbol));
+                const retrieved_symbols = tickers.filter(({price})=> price > 100 )
+                                                 .map(({symbol}) => symbol);
+                setSymbols(retrieved_symbols);
+            });
+    },[]);
 
     return (
         <Container>
