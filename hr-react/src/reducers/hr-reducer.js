@@ -23,6 +23,9 @@ export default function HrReducer(state, action) {
         case ActionTypes.ON_FULLTIME_CHANGE:
             employee[action.name] = !employee[action.name];
             return {...state, employee};
+        case ActionTypes.ON_EMPLOYEE_HIRED:
+            alert(`Employee is hired: ${action.value}`);
+            break;
     }
     return {...state}; // shallow
 }
