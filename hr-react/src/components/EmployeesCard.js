@@ -1,7 +1,7 @@
 import Card from "./common/card";
 import {useEmployees, useHrDispatcher, useSortDirections} from "../providers/hr-provider";
 import Button from "./common/button";
-import {useCallback, useMemo} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import Photo from "./common/photo";
 import callApi, {API_OPTIONS} from "../utils/api-utils";
 import {ActionTypes} from "../reducers/hr-reducer";
@@ -50,7 +50,7 @@ export default function EmployeesCard() {
             )
         );
     }, [employees]);
-    const sortBy = useCallback( column => {
+    const sortBy = useCallback(column => {
         hrDispatcher({type: ActionTypes.ON_SORTED, value: column});
     })
     const retrieveEmployees = useCallback(async () => {
@@ -62,6 +62,24 @@ export default function EmployeesCard() {
             .catch(handleError);
     }, [hrDispatcher, handleError]);
 
+    useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        fetch(`http://localhost:4001/employees`, {
+            method: "GET",
+            signal,
+            headers: [
+                {"Accept": "application/json"}
+            ]
+        })
+            .then(res => res.json())
+            .then(employees => {
+                hrDispatcher({type: ActionTypes.ON_EMPLOYEES_RETRIEVED, value: employees});
+            });
+        return () => {
+            controller.abort();
+        }
+    });
     return (
         <Card title={"Employees"}>
             <Button color={"btn-success"}
