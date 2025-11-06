@@ -13,6 +13,13 @@ export const ActionTypes = {
 }
 export default function HrReducer(state, action) {
     let employee = {...state.employee};
-    // implement this
+    switch(action.type) {
+        case ActionTypes.ON_CHANGE:
+            employee[action.name] = action.value;
+            return {...state, employee};
+        case ActionTypes.ON_FULLTIME_CHANGE:
+            employee[action.name] = !employee[action.name];
+            return {...state, employee};
+    }
     return {...state}; // shallow
 }
