@@ -31,7 +31,7 @@ export default function EmployeeCard() {
                 {
                     employees.map((employee, index) => (
                             <tr key={employee.identityNo}>
-                                <td>{index+1}</td>
+                                <td>{index + 1}</td>
                                 <td><Photo readOnly={true} value={employee.photo}/></td>
                                 <td>{employee.identityNo}</td>
                                 <td>{employee.fullname}</td>
