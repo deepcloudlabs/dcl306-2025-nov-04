@@ -9,7 +9,7 @@ import CheckBox from "./components/common/check-box";
 import {ActionTypes} from "./reducers/hr-reducer";
 import Button from "./components/common/button";
 import callApi, {API_OPTIONS} from "./utils/api-utils";
-import EmployeeCard from "./components/EmployeesCard";
+import EmployeesCard from "./components/EmployeesCard";
 
 function HrApp() {
     const employee = useEmployee();
@@ -59,7 +59,7 @@ function HrApp() {
     const updateEmployee = useCallback(async () => {
         callApi("/", {...API_OPTIONS.PUT, body: JSON.stringify(employee)})
             .then(response => {
-                hrDispatcher({type: ActionTypes.ON_EMPLOYEE_UPDATED, value: response.status})
+                hrDispatcher({type: ActionTypes.ON_EMPLOYEE_UPDATED, value: response.n === 1 ? "OK" : "ERROR" })
             })
             .catch(handleError);
     }, [hrDispatcher, handleError, employee]);
@@ -126,7 +126,7 @@ function HrApp() {
                     </div>
                 </Card>
                 <p></p>
-                <EmployeeCard />
+                <EmployeesCard />
             </Container>
         </>
     );

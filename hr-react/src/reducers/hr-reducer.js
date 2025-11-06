@@ -26,12 +26,25 @@ export default function HrReducer(state, action) {
         case ActionTypes.ON_EMPLOYEE_HIRED:
             alert(`Employee is hired: ${action.value}`);
             break;
-        case ActionTypes.ON_EMPLOYEES_RETRIEVED:
-            return {...state,employees: action.value}
+        case ActionTypes.ON_EMPLOYEE_FIRED:
+            alert(`Employee is fired: ${action.value.identityNo}`);
+            return {...state, employee: action.value};
+        case ActionTypes.ON_EMPLOYEE_FIRED_ON_ROW:
+            alert(`Employee is fired: ${action.value.identityNo}`);
+            let employees = state.employees.filter(emp => emp.identityNo !== action.value.identityNo);
+            return {...state, employee: action.value, employees};
+        case ActionTypes.ON_EMPLOYEE_UPDATED:
+            alert(`Employee is updated: ${action.value}`);
             break;
-            case ActionTypes.ON_ROW_CLICKED:
-                return {...state, employee: action.value}
-                break;
+        case ActionTypes.ON_EMPLOYEES_RETRIEVED:
+            return {...state, employees: action.value}
+            break;
+        case ActionTypes.ON_EMPLOYEE_RECEIVED:
+            return {...state, employee: action.value}
+            break;
+        case ActionTypes.ON_ROW_CLICKED:
+            return {...state, employee: action.value}
+            break;
     }
     return {...state}; // shallow
 }

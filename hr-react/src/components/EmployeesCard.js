@@ -7,12 +7,26 @@ import callApi, {API_OPTIONS} from "../utils/api-utils";
 import {ActionTypes} from "../reducers/hr-reducer";
 import Badge from "./common/badge";
 
-export default function EmployeeCard() {
+export default function EmployeesCard() {
     const employees = useEmployees();
     const hrDispatcher = useHrDispatcher();
+
+    const handleError = useCallback(err => {
+        hrDispatcher({type: ActionTypes.ON_ERROR, value: err});
+    }, [hrDispatcher]);
+
+    const fireEmployeeAtRow = useCallback((identityNo) => {
+        callApi(`/${identityNo}`, API_OPTIONS.DELETE)
+            .then(employee => {
+                hrDispatcher({type: ActionTypes.ON_EMPLOYEE_FIRED_ON_ROW, value: employee})
+            })
+            .catch(handleError);
+    }, [hrDispatcher, handleError]);
+
     const copyRow = useCallback(employee => {
         hrDispatcher({type: ActionTypes.ON_ROW_CLICKED, value: employee});
     }, [hrDispatcher]);
+
     const tableRows = useMemo(() => {
         console.log("Rendering rows...");
         return employees.map((employee, index) => (
@@ -28,15 +42,13 @@ export default function EmployeeCard() {
                     <td><Badge color={"bg-warning"} displayOnly={true} value={employee.department}/></td>
                     <td><Badge color={"bg-primary"} displayOnly={true}
                                value={employee.fulltime ? 'FULL-TIME' : 'PART-TIME'}/></td>
-                    <td><Button color={"btn-danger"} label={"Fire Employee"}/></td>
+                    <td><Button color={"btn-danger"}
+                                click={() => fireEmployeeAtRow(employee.identityNo)}
+                                label={"Fire Employee"}/></td>
                 </tr>
             )
         );
     }, [employees]);
-    const handleError = useCallback(err => {
-        console.log("handleError() is created!")
-        hrDispatcher({type: ActionTypes.ON_ERROR, value: err});
-    }, [hrDispatcher]);
 
     const retrieveEmployees = useCallback(async () => {
         console.log("retrieveEmployees() is created!")
