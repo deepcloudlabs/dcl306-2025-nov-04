@@ -49,7 +49,7 @@ ws.on("message", data => {
         "timestamp": frame.E,
         "sequence": frame.t
     } ;
-    //console.log(model);
+    console.log(model);
     let trade = new Trade(model);
     trade.save().then(()=>{
         //console.log("trade event is saved")

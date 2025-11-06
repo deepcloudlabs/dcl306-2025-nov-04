@@ -6,10 +6,7 @@ let mongoose = require('mongoose');
 const connectionUrl = 'mongodb://localhost:27017/tradedb';
 
 mongoose.connect(connectionUrl, {
-    "useNewUrlParser": true,
-    "socketTimeoutMS": 0,
-    "keepAlive": true,
-    "useUnifiedTopology": true
+    "socketTimeoutMS": 0
 });
 
 let tradeSchema = new mongoose.Schema({
