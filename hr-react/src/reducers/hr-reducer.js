@@ -29,6 +29,9 @@ export default function HrReducer(state, action) {
         case ActionTypes.ON_EMPLOYEES_RETRIEVED:
             return {...state,employees: action.value}
             break;
+            case ActionTypes.ON_ROW_CLICKED:
+                return {...state, employee: action.value}
+                break;
     }
     return {...state}; // shallow
 }

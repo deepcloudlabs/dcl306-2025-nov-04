@@ -11,7 +11,7 @@ export default function Photo({id, label, value, handleChange, readOnly=false}) 
     }
     if (readOnly) {
         return (
-            <img src={value} alt="Employee's photo" className={"img-thumbnail"} />
+            <img style={{width: "64px", height:"64px"}} src={value} alt="Employee's photo" className={"img-thumbnail"} />
         );
     }
     return (

@@ -10,12 +10,36 @@ import Badge from "./common/badge";
 export default function EmployeeCard() {
     const employees = useEmployees();
     const hrDispatcher = useHrDispatcher();
-
+    const copyRow = useCallback(employee => {
+        hrDispatcher({type: ActionTypes.ON_ROW_CLICKED, value: employee});
+    }, [hrDispatcher]);
+    const tableRows = useMemo(() => {
+        console.log("Rendering rows...");
+        return employees.map((employee, index) => (
+                <tr key={employee.identityNo}
+                    onClick={(e) => copyRow(employee)}>
+                    <td>{index + 1}</td>
+                    <td><Photo readOnly={true} value={employee.photo}/></td>
+                    <td>{employee.identityNo}</td>
+                    <td>{employee.fullname}</td>
+                    <td>{employee.salary}</td>
+                    <td>{employee.iban}</td>
+                    <td>{employee.birthYear}</td>
+                    <td><Badge color={"bg-warning"} displayOnly={true} value={employee.department}/></td>
+                    <td><Badge color={"bg-primary"} displayOnly={true}
+                               value={employee.fulltime ? 'FULL-TIME' : 'PART-TIME'}/></td>
+                    <td><Button color={"btn-danger"} label={"Fire Employee"}/></td>
+                </tr>
+            )
+        );
+    }, [employees]);
     const handleError = useCallback(err => {
+        console.log("handleError() is created!")
         hrDispatcher({type: ActionTypes.ON_ERROR, value: err});
     }, [hrDispatcher]);
 
     const retrieveEmployees = useCallback(async () => {
+        console.log("retrieveEmployees() is created!")
         callApi("/", API_OPTIONS.GET)
             .then(employees => {
                 hrDispatcher({type: ActionTypes.ON_EMPLOYEES_RETRIEVED, value: employees})
@@ -45,21 +69,7 @@ export default function EmployeeCard() {
                 </thead>
                 <tbody>
                 {
-                    employees.map((employee, index) => (
-                            <tr key={employee.identityNo}>
-                                <td>{index + 1}</td>
-                                <td><Photo readOnly={true} value={employee.photo}/></td>
-                                <td>{employee.identityNo}</td>
-                                <td>{employee.fullname}</td>
-                                <td>{employee.salary}</td>
-                                <td>{employee.iban}</td>
-                                <td>{employee.birthYear}</td>
-                                <td><Badge color={"bg-warning"} displayOnly={true} value={employee.department}/></td>
-                                <td><Badge color={"bg-primary"} displayOnly={true} value={employee.fulltime ? 'FULL-TIME' : 'PART-TIME'}/></td>
-                                <td><Button color={"btn-danger"} label={"Fire Employee"}/></td>
-                            </tr>
-                        )
-                    )
+                    tableRows
                 }
                 </tbody>
             </table>
