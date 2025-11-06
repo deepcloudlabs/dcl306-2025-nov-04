@@ -9,9 +9,25 @@ import Badge from "./common/badge";
 
 export default function EmployeeCard() {
     const employees = useEmployees();
+    const hrDispatcher = useHrDispatcher();
+
+    const handleError = useCallback(err => {
+        hrDispatcher({type: ActionTypes.ON_ERROR, value: err});
+    }, [hrDispatcher]);
+
+    const retrieveEmployees = useCallback(async () => {
+        callApi("/", API_OPTIONS.GET)
+            .then(employees => {
+                hrDispatcher({type: ActionTypes.ON_EMPLOYEES_RETRIEVED, value: employees})
+            })
+            .catch(handleError);
+    }, [hrDispatcher, handleError]);
+
     return (
         <Card title={"Employees"}>
-            <Button color={"btn-success"} label={"Retrieve Employees"}></Button>
+            <Button color={"btn-success"}
+                    click={retrieveEmployees}
+                    label={"Retrieve Employees"}></Button>
             <table className={"table table-bordered table-responsive table-hover table-striped"}>
                 <thead>
                 <tr>
@@ -38,9 +54,9 @@ export default function EmployeeCard() {
                                 <td>{employee.salary}</td>
                                 <td>{employee.iban}</td>
                                 <td>{employee.birthYear}</td>
-                                <td><Badge displayOnly={true} value={employee.birthYear}/></td>
-                                <td><Badge displayOnly={true} value={employee.fulltime ? 'FULL-TIME' : 'PART-TIME'}/></td>
-                                <td><Button color={"danger"} label={"Fire Employee"}/></td>
+                                <td><Badge color={"bg-warning"} displayOnly={true} value={employee.department}/></td>
+                                <td><Badge color={"bg-primary"} displayOnly={true} value={employee.fulltime ? 'FULL-TIME' : 'PART-TIME'}/></td>
+                                <td><Button color={"btn-danger"} label={"Fire Employee"}/></td>
                             </tr>
                         )
                     )
