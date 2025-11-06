@@ -1,6 +1,6 @@
 import React, {useMemo} from "react";
 
-export default function SelectBox({id,value,label,change,options}) {
+export default function SelectBox({id,value,label,change,options, isPending}) {
     const options_view = useMemo(()=>
         options.map(option =>
             (<option key={option}>{option}</option>)
@@ -15,6 +15,7 @@ export default function SelectBox({id,value,label,change,options}) {
                     className={"form-control form-select"}
                     value={value}
                     onChange={change}>
+                {isPending && <option value={false}>Waiting to update options...</option>}
                 {
                     options_view
                 }
