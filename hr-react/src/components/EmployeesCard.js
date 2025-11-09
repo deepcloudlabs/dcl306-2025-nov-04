@@ -32,7 +32,7 @@ export default function EmployeesCard() {
         console.log("Rendering rows...");
         return employees.map((employee, index) => (
                 <tr key={employee.identityNo}
-                    onClick={(e) => copyRow(employee)}>
+                    onClick={(_) => copyRow(employee)}>
                     <td>{index + 1}</td>
                     <td><Photo readOnly={true} value={employee.photo}/></td>
                     <td>{employee.identityNo}</td>
@@ -49,10 +49,10 @@ export default function EmployeesCard() {
                 </tr>
             )
         );
-    }, [employees]);
+    }, [employees, copyRow, fireEmployeeAtRow]);
     const sortBy = useCallback(column => {
         hrDispatcher({type: ActionTypes.ON_SORTED, value: column});
-    })
+    }, [hrDispatcher]);
     const retrieveEmployees = useCallback(async () => {
         console.log("retrieveEmployees() is created!")
         callApi("/", API_OPTIONS.GET)
@@ -68,18 +68,21 @@ export default function EmployeesCard() {
         fetch(`http://localhost:4001/employees`, {
             method: "GET",
             signal,
-            headers: [
-                {"Accept": "application/json"}
-            ]
+            headers: {"Accept": "application/json"}
         })
             .then(res => res.json())
             .then(employees => {
                 hrDispatcher({type: ActionTypes.ON_EMPLOYEES_RETRIEVED, value: employees});
-            });
+            }).catch(err => {
+                if (err.name !== "AbortError") {
+                    handleError(err);
+                }
+            }
+        );
         return () => {
             controller.abort();
         }
-    });
+    }, [hrDispatcher, handleError]);
     return (
         <Card title={"Employees"}>
             <Button color={"btn-success"}
