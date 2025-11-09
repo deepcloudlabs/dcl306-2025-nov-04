@@ -15,7 +15,7 @@ export default function Badge({isVisible = true, label= "", value, color = "defa
 
 Badge.propTypes = {
     isVisible: PropTypes.bool,
-    label: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired = "",
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     color: PropTypes.string,
 };
